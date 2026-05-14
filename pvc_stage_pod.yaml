@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-stage
+  namespace: ssu-isl-bimanual-dexterity
+spec:
+  restartPolicy: Never
+  containers:
+    - name: stage
+      image: ubuntu:22.04
+      command: ["bash", "-c", "mkdir -p /workspace/data && tail -f /dev/null"]
+      resources:
+        limits:
+          memory: "4Gi"
+          cpu: "2"
+        requests:
+          memory: "1Gi"
+          cpu: "1"
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+  volumes:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: umi-data-pvc

@@ -1,0 +1,88 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: umi-train-session1-v1          # increment v2, v3, ... for reruns
+  namespace: ssu-isl-bimanual-dexterity
+spec:
+  ttlSecondsAfterFinished: 86400   # pod auto-deleted 24 h after completion
+  backoffLimit: 0                  # do not retry on failure
+  template:
+    spec:
+      restartPolicy: Never
+
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  # Require Volta (7) or newer — Pascal (6) dropped in PyTorch 2.4+
+                  - key: nvidia.com/gpu.compute.major
+                    operator: In
+                    values: ["7", "8", "9"]
+
+      containers:
+        - name: umi-train
+          image: profshrestha/umi-rx150:latest
+
+          resources:
+            limits:
+              memory: "48Gi"
+              cpu: "8"
+              nvidia.com/gpu: "1"
+            requests:
+              memory: "24Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+
+          env:
+            - name: WANDB_MODE
+              value: "disabled"
+            - name: PYTORCH_CUDA_ALLOC_CONF
+              value: "expandable_segments:True"
+
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              mkdir -p /workspace/logs
+              exec > >(tee -a /workspace/logs/cube_train.log) 2>&1
+              echo "=== Job started $(date) on $HOSTNAME ==="
+              nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+
+              DATASET=/workspace/data/session1.zarr.zip
+              if [ ! -f "$DATASET" ]; then
+                echo "ERROR: dataset not found at $DATASET"
+                echo "Upload it first — see NRP_Training_Instructions.md Step 3."
+                exit 1
+              fi
+              echo "=== Dataset found: $(du -sh $DATASET) ==="
+
+              echo "=== Starting bimanual training ==="
+              mkdir -p /workspace/checkpoints/session1_001
+              cd /opt/umi
+              python train.py \
+                --config-name=train_diffusion_unet_umi_bimanual_workspace \
+                task.dataset_path=$DATASET \
+                hydra.run.dir=/workspace/checkpoints/session1_001 \
+                dataloader.batch_size=8 \
+                val_dataloader.batch_size=2 \
+                dataloader.num_workers=4
+
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+            - name: dshm
+              mountPath: /dev/shm
+
+      volumes:
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: umi-workspace-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi

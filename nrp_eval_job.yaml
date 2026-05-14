@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bimanual-eval
+  namespace: ssu-isl-bimanual-dexterity
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.compute.major
+                operator: In
+                values: ["7", "8", "9"]
+      tolerations:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      containers:
+      - name: evaluator
+        image: profshrestha/umi-rx150:latest
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          echo "=== Eval started $(date) on $HOSTNAME ==="
+          nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
+          
+          cd /opt/umi
+          export PYTHONPATH=/opt/umi:$PYTHONPATH
+
+          conda run -n umi python -m pip install imagecodecs imagecodecs-numcodecs
+
+          conda run -n umi python /workspace/eval_from_zarr.py \
+            --checkpoint /workspace/checkpoints/may326_002/checkpoints/latest.ckpt \
+            --zarr /workspace/data/session1.zarr.zip \
+            --num_samples -1 \
+            --output_dir /workspace/eval_results_2
+        resources:
+          limits:
+            nvidia.com/gpu: "1"
+            memory: "48Gi"
+            cpu: "8"
+          requests:
+            nvidia.com/gpu: "1"
+            memory: "48Gi"
+            cpu: "8"
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+        - name: dshm
+          mountPath: /dev/shm
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: umi-data-pvc
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: "8Gi"
+      restartPolicy: Never
