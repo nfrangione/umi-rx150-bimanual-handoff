@@ -337,6 +337,9 @@ The zarr contains processed demonstrations and arrays used by the UMI dataset cl
 
 ---
 
+### OUR REPLAY BUFFER:
+- https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
+
 ## 4. Upload / Store Dataset on NRP
 
 The NRP namespace used:
@@ -529,6 +532,9 @@ suggested max number of worker in current system is 8.
 ```
 
 ---
+
+###OUR LATEST CHECKPOINT: 
+- https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
 
 ## 6. Offline Evaluation Against Zarr
 
