@@ -1,4 +1,10 @@
-# ISL UMI RX150 Cube Hand-Off: Collection → SLAM → Training → Evaluation README
+# ISL Training Bimanual Handoff of Cube using UMI on RX150: Collection → SLAM → Training -> Evaluation
+
+Project Team:
+- Dr. Sudhir Shrestha
+- Kai Nunnemaker
+- Nick Frangione
+- Antonio Lozoida Cigala
 
 This README documents the end-to-end process used for the bimanual RX150 cube hand-off project:
 
