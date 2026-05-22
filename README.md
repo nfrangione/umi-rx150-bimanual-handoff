@@ -10,6 +10,12 @@ This README documents the end-to-end process used for the bimanual RX150 cube ha
 
 The project is based on Stanford's Universal Manipulation Interface (UMI) pipeline and the ISL cube hand-off project wrapper. The UMI framework is designed for data collection from human demonstrations and policy learning using image observations, robot/gripper state, and relative action representations.
 
+### OUR REPLAY BUFFER:
+- https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
+
+### OUR LATEST CHECKPOINT: 
+- https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
+
 ---
 
 ## 0. Repositories Used
@@ -533,7 +539,7 @@ suggested max number of worker in current system is 8.
 
 ---
 
-###OUR LATEST CHECKPOINT: 
+### OUR LATEST CHECKPOINT: 
 - https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
 
 ## 6. Offline Evaluation Against Zarr
