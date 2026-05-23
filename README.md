@@ -17,7 +17,7 @@ This README documents the end-to-end process used for the bimanual RX150 cube ha
 The project is based on Stanford's Universal Manipulation Interface (UMI) pipeline and the ISL cube hand-off project wrapper. The UMI framework is designed for data collection from human demonstrations and policy learning using image observations, robot/gripper state, and relative action representations.
 
 ### OUR REPLAY BUFFER:
-- https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
+- https://drive.google.com/file/d/1eWRg2ABzHR9hCOEbZNDyeoMLKhq25S_-/view?usp=sharing
 
 ### OUR LATEST CHECKPOINT: 
 - https://drive.google.com/file/d/1KjVi1yoh-ULo72daNIsR49pvvbQyotnJ/view?usp=sharing
@@ -53,6 +53,10 @@ Project wrapper / lab-specific repository:
 https://github.com/profshrestha/isl_umi_cube_hand_off
 
 This repository contains lab-specific job files, Docker image references, NRP instructions, and project organization for the RX150 bimanual hand-off task.
+
+---
+
+## 0a. Clone Stanford Repository and Make Sure Environment Set-up is According to their Instructions
 
 ---
 
